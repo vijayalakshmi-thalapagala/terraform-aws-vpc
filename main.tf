@@ -7,7 +7,7 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_internet_gateway" "main" {
-    vpc_id = aws_vpc.main.id
+    vpc_id = aws_vpc.main.id  # VPC association
 
     tags = local.igw_final_tags
 }
@@ -115,7 +115,7 @@ resource "aws_eip" "nat" {
     tags = merge(
         local.common_tags,
         {
-            Name = "${var-project}-${var.environment}-nat"
+            Name = "${var.project}-${var.environment}-nat"
         },
         var.eip_tags
     ) 
@@ -132,10 +132,10 @@ resource "aws_nat_gateway" "main" {
         },
         var.nat_gateway_tags
     )
-    
+
     #to ensure proper ordering, it is recommended to add explicit dependecny
     # on the internet gateway for the VPC
-    depends_on = [ aws_internet_gateway.example ]
+    depends_on = [aws_internet_gateway.main]
 }
 
 resource "aws_route" "private" {
